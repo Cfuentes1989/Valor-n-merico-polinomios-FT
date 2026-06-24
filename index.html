@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PoliSelva 🌴 Valor Numérico de Polinomios</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@400;600;700&display=swap');
+
+:root {
+  --selva-osc:  #0d3b2e;
+  --selva:      #1d5c43;
+  --selva-cl:   #3e8e6e;
+  --hoja:       #6fbf73;
+  --tierra:     #8a5a3a;
+  --madera:     #6b4226;
+  --amarillo:   #ffcc4d;
+  --naranja:    #ff9248;
+  --rojo-fruta: #e25c5c;
+  --crema:      #fef8e8;
+  --shadow:     4px 4px 0 #0d3b2e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  background-color: var(--selva-osc);
+  background-image:
+    radial-gradient(circle, rgba(111,191,115,0.18) 3px, transparent 3px),
+    radial-gradient(circle, rgba(255,204,77,0.10) 2px, transparent 2px);
+  background-size: 60px 60px, 40px 40px;
+  background-position: 0 0, 20px 20px;
+  color: var(--crema);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 22px 16px 50px;
+}
+
+/* ══ INICIO ══ */
+#pantalla-inicio { text-align: center; }
+
+.selva-header {
+  border: 5px solid var(--amarillo);
+  border-radius: 24px;
+  background: var(--selva);
+  box-shadow: var(--shadow);
+  padding: 28px 18px 22px;
+  margin-bottom: 26px;
+  position: relative;
+  overflow: hidden;
+}
+
+.selva-header::before {
+  content: '🌿🦜🌴🐒🌿🦋';
+  position: absolute;
+  top: 6px; left: 0; right: 0;
+  font-size: 1.1rem;
+  opacity: 0.45;
+  letter-spacing: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.titulo-selva {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.3rem, 8.5vw, 4rem);
+  color: var(--amarillo);
+  text-shadow: 3px 3px 0 var(--selva-osc);
+  line-height: 1.1;
+  margin-top: 18px;
+}
+
+.subtitulo-selva {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.05rem, 3.8vw, 1.5rem);
+  color: var(--crema);
+  margin-top: 8px;
+}
+
+.mascota-fila-selva {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+
+.mascota-explorador {
+  font-size: 85px;
+  filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.35));
+  animation: balancea 2.2s ease-in-out infinite;
+}
+
+@keyframes balancea {
+  0%, 100% { transform: rotate(-4deg) translateY(0); }
+  50%      { transform: rotate(4deg) translateY(-12px); }
+}
+
+.globo-explorador {
+  position: relative;
+  background: var(--crema);
+  color: var(--selva-osc);
+  border: 4px solid var(--selva-osc);
+  border-radius: 20px;
+  padding: 14px 18px;
+  max-width: 230px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  text-align: left;
+  box-shadow: var(--shadow);
+}
+
+.globo-explorador::before {
+  content: '';
+  position: absolute;
+  left: -18px; top: 50%;
+  transform: translateY(-50%);
+  border: 9px solid transparent;
+  border-right-color: var(--selva-osc);
+}
+.globo-explorador::after {
+  content: '';
+  position: absolute;
+  left: -11px; top: 50%;
+  transform: translateY(-50%);
+  border: 7px solid transparent;
+  border-right-color: var(--crema);
+}
+
+.info-grid-selva {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.info-celda-selva {
+  border: 3px solid var(--amarillo);
+  border-radius: 16px;
+  background: var(--selva);
+  padding: 14px 8px;
+}
+
+.ics-icono { font-size: 1.8rem; }
+.ics-numero {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 2.1rem;
+  color: var(--amarillo);
+  line-height: 1;
+  margin: 4px 0;
+}
+.ics-etiq { font-size: 0.8rem; font-weight: 700; opacity: 0.9; }
+
+.mapa-temas {
+  border: 3px solid var(--amarillo);
+  border-radius: 18px;
+  background: var(--selva);
+  padding: 18px 20px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.mapa-temas h3 {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--amarillo);
+  margin-bottom: 14px;
+  border-bottom: 3px dashed var(--crema);
+  padding-bottom: 6px;
+}
+
+.mapa-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 11px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.mapa-tag {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  padding: 3px 11px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: 2px solid;
+}
+
+.btn-explorar {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1.7rem;
+  letter-spacing: 1px;
+  color: var(--selva-osc);
+  background: var(--amarillo);
+  border: 5px solid var(--crema);
+  border-radius: 50px;
+  padding: 16px 44px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.btn-explorar:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--selva-osc); }
+.btn-explorar:active { transform: translate(3px,3px);   box-shadow: 1px 1px 0 var(--selva-osc); }
+
+/* ══ QUIZ ══ */
+#pantalla-quiz { display: none; }
+
+.topbar-selva {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.barra-wrap-selva { flex: 1; min-width: 170px; }
+
+.barra-label-selva { font-weight: 700; font-size: 0.85rem; opacity: 0.85; margin-bottom: 5px; }
+
+.barra-outer-selva {
+  height: 18px;
+  border: 3px solid var(--amarillo);
+  border-radius: 20px;
+  background: var(--selva);
+  overflow: hidden;
+}
+
+.barra-inner-selva {
+  height: 100%;
+  background: repeating-linear-gradient(45deg, var(--hoja) 0px, var(--hoja) 8px, var(--selva-cl) 8px, var(--selva-cl) 16px);
+  border-radius: 20px;
+  transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.score-selva {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  background: var(--amarillo);
+  border: 3px solid var(--crema);
+  border-radius: 14px;
+  padding: 4px 16px;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+  color: var(--selva-osc);
+}
+
+.mascota-mini-selva { font-size: 2.3rem; animation: balancea 1.5s ease-in-out infinite; }
+
+.ficha-pregunta-selva {
+  border: 4px solid var(--amarillo);
+  border-radius: 18px;
+  background: var(--selva);
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+
+.ficha-cabecera-selva {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 3px solid var(--amarillo);
+}
+
+.tema-badge-selva {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 2px solid;
+}
+
+.num-badge-selva { font-weight: 700; font-size: 0.82rem; opacity: 0.6; }
+
+.ficha-cuerpo-selva { padding: 18px 18px 16px; }
+
+.texto-pregunta-selva {
+  font-weight: 700;
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  line-height: 1.55;
+  color: var(--crema);
+}
+
+.expr-selva {
+  display: block;
+  margin: 14px 0 4px;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.95rem, 2.7vw, 1.25rem);
+  background: var(--crema);
+  color: var(--selva-osc);
+  border: 3px dashed var(--amarillo);
+  border-radius: 10px;
+  padding: 14px 16px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+/* Opciones */
+.opciones-selva {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+@media (max-width: 480px) { .opciones-selva { grid-template-columns: 1fr; } }
+
+.opcion-selva {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 3px solid var(--crema);
+  border-radius: 16px;
+  padding: 14px 14px;
+  background: var(--selva-osc);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.93rem;
+  text-align: left;
+  line-height: 1.4;
+  color: var(--crema);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+  transition: all 0.15s;
+}
+
+.opcion-selva:not(:disabled):hover {
+  background: var(--selva);
+  transform: translate(-2px,-2px);
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.3);
+}
+.opcion-selva:not(:disabled):active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,0.3); }
+
+.letra-selva {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  width: 34px; height: 34px;
+  border: 3px solid var(--amarillo);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  background: var(--selva);
+  color: var(--amarillo);
+}
+
+.opcion-selva.correcta {
+  background: rgba(111,191,115,0.3);
+  border-color: var(--hoja);
+  box-shadow: 3px 3px 0 var(--hoja);
+}
+.opcion-selva.correcta .letra-selva { background: var(--hoja); border-color: var(--hoja); color: var(--selva-osc); }
+
+.opcion-selva.incorrecta {
+  background: rgba(226,92,92,0.25);
+  border-color: var(--rojo-fruta);
+  box-shadow: 3px 3px 0 var(--rojo-fruta);
+  animation: tiembla-selva 0.4s ease;
+}
+.opcion-selva.incorrecta .letra-selva { background: var(--rojo-fruta); border-color: var(--rojo-fruta); color: white; }
+
+@keyframes tiembla-selva {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* Feedback */
+.feedback-selva {
+  display: none;
+  border: 4px solid var(--hoja);
+  border-radius: 18px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  animation: aparece-selva 0.3s ease-out;
+}
+.feedback-selva.fb-mal { border-color: var(--rojo-fruta); }
+
+@keyframes aparece-selva {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.feedback-selva.visible { display: block; }
+
+.fb-cab-selva {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(111,191,115,0.25);
+}
+.fb-mal .fb-cab-selva { background: rgba(226,92,92,0.2); }
+
+.fb-tit-selva {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--amarillo);
+}
+
+.fb-cuerpo-selva {
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.6;
+  background: var(--crema);
+  color: var(--selva-osc);
+}
+
+.btn-siguiente-selva {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--selva-osc);
+  background: var(--amarillo);
+  border: 4px solid var(--crema);
+  border-radius: 50px;
+  padding: 13px 36px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.12s, box-shadow 0.12s;
+  display: none;
+  width: 100%;
+  margin-top: 4px;
+}
+.btn-siguiente-selva:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--selva-osc); }
+.btn-siguiente-selva:active { transform: translate(2px,2px);   box-shadow: 1px 1px 0 var(--selva-osc); }
+
+.punto-fly-selva {
+  position: fixed;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--hoja);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  pointer-events: none;
+  z-index: 9999;
+  animation: vuela-selva 1.1s ease-out forwards;
+}
+@keyframes vuela-selva {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-85px) scale(1.4); opacity: 0; }
+}
+
+/* ══ RESULTADO ══ */
+#pantalla-resultado { display: none; text-align: center; }
+
+.result-selva-box {
+  border: 5px solid var(--amarillo);
+  border-radius: 24px;
+  background: var(--selva);
+  box-shadow: var(--shadow);
+  padding: 28px 18px 22px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.res-mascota-selva { font-size: 80px; display: block; animation: balancea 1.8s ease-in-out infinite; }
+
+.res-titulo-selva {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.9rem, 7vw, 3.1rem);
+  color: var(--amarillo);
+  text-shadow: 3px 3px 0 var(--selva-osc);
+  margin: 12px 0 8px;
+  line-height: 1.15;
+}
+
+.res-puntos-selva {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: clamp(3.5rem, 12vw, 6rem);
+  color: var(--crema);
+  text-shadow: 3px 3px 0 var(--selva-osc);
+  line-height: 1;
+}
+
+.res-puntos-label-selva { font-weight: 700; font-size: 0.95rem; opacity: 0.85; margin-bottom: 10px; }
+
+.estrellas-selva { font-size: 2rem; letter-spacing: 6px; margin: 8px 0; }
+
+.res-msg-selva {
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.stats-selva {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 22px 0 28px;
+}
+
+.stat-selva-celda {
+  border: 3px solid var(--amarillo);
+  border-radius: 16px;
+  background: var(--selva);
+  padding: 14px 8px;
+}
+
+.sps-num { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 2.2rem; line-height: 1; }
+.sps-lbl { font-weight: 700; font-size: 0.78rem; opacity: 0.85; margin-top: 4px; }
+
+.btn-reintentar-selva {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--selva-osc);
+  background: var(--amarillo);
+  border: 5px solid var(--crema);
+  border-radius: 50px;
+  padding: 16px 42px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.btn-reintentar-selva:hover  { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--selva-osc); }
+.btn-reintentar-selva:active { transform: translate(3px,3px);   box-shadow: 1px 1px 0 var(--selva-osc); }
+
+.confetti-selva {
+  position: fixed;
+  width: 12px; height: 12px;
+  border-radius: 50% 0 50% 0;
+  pointer-events: none;
+  z-index: 9999;
+  animation: cae-selva linear forwards;
+}
+@keyframes cae-selva {
+  from { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  to   { transform: translateY(100vh) rotate(540deg); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ═══ INICIO ═══ -->
+<div id="pantalla-inicio">
+  <div class="selva-header">
+    <div class="titulo-selva">PoliSelva</div>
+    <div class="subtitulo-selva">¡Aventura por el Valor Numérico de Polinomios! 🌴</div>
+  </div>
+
+  <div class="mascota-fila-selva">
+    <span class="mascota-explorador">🦜</span>
+    <div class="globo-explorador">
+      ¡Usa la <strong style="color:var(--rojo-fruta)">báscula mágica de Horner</strong> para descubrir el valor escondido de cada expresión! 🔢
+    </div>
+  </div>
+
+  <div class="info-grid-selva">
+    <div class="info-celda-selva"><div class="ics-icono">❓</div><div class="ics-numero">20</div><div class="ics-etiq">Preguntas</div></div>
+    <div class="info-celda-selva"><div class="ics-icono">⭐</div><div class="ics-numero">10</div><div class="ics-etiq">Pts por acierto</div></div>
+    <div class="info-celda-selva"><div class="ics-icono">🗺️</div><div class="ics-numero">4</div><div class="ics-etiq">Senderos</div></div>
+  </div>
+
+  <div class="mapa-temas">
+    <h3>🗺️ SENDEROS DE LA AVENTURA</h3>
+    <div class="mapa-item">
+      <span class="mapa-tag" style="background:#ffcc4d22; border-color:var(--amarillo); color:var(--amarillo);">SENDERO 1</span>
+      Evaluación de polinomios para valores específicos
+    </div>
+    <div class="mapa-item">
+      <span class="mapa-tag" style="background:#6fbf7322; border-color:var(--hoja); color:var(--hoja);">SENDERO 2</span>
+      División sintética y Regla de Horner
+    </div>
+    <div class="mapa-item">
+      <span class="mapa-tag" style="background:#e25c5c22; border-color:var(--rojo-fruta); color:var(--rojo-fruta);">SENDERO 3</span>
+      Verificación de raíces de un polinomio
+    </div>
+    <div class="mapa-item">
+      <span class="mapa-tag" style="background:#ff924822; border-color:var(--naranja); color:var(--naranja);">SENDERO 4</span>
+      Problemas contextualizados con polinomios
+    </div>
+  </div>
+
+  <button class="btn-explorar" onclick="iniciarQuiz()">¡COMENZAR AVENTURA! 🧭</button>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div id="pantalla-quiz">
+  <div class="topbar-selva">
+    <div class="barra-wrap-selva">
+      <div class="barra-label-selva" id="txt-prog-selva">Pregunta 1 de 20</div>
+      <div class="barra-outer-selva"><div class="barra-inner-selva" id="barra-selva" style="width:5%"></div></div>
+    </div>
+    <div class="score-selva">⭐ <span id="pts-display-selva">0</span></div>
+    <div class="mascota-mini-selva" id="mascota-mini-selva">🦜</div>
+  </div>
+
+  <div class="ficha-pregunta-selva">
+    <div class="ficha-cabecera-selva">
+      <span class="tema-badge-selva" id="tema-badge-selva">Sendero</span>
+      <span class="num-badge-selva" id="num-badge-selva">#1/20</span>
+    </div>
+    <div class="ficha-cuerpo-selva">
+      <div class="texto-pregunta-selva" id="texto-pregunta-selva">Cargando...</div>
+      <span class="expr-selva" id="expr-selva" style="display:none"></span>
+    </div>
+  </div>
+
+  <div class="opciones-selva" id="opciones-selva"></div>
+
+  <div class="feedback-selva" id="feedback-selva">
+    <div class="fb-cab-selva" id="fb-cab-selva">
+      <span id="fb-icon-selva" style="font-size:1.3rem;"></span>
+      <span class="fb-tit-selva" id="fb-tit-selva"></span>
+    </div>
+    <div class="fb-cuerpo-selva" id="fb-cuerpo-selva"></div>
+  </div>
+
+  <button class="btn-siguiente-selva" id="btn-sig-selva" onclick="siguientePregunta()">SIGUIENTE ➡️</button>
+</div>
+
+<!-- ═══ RESULTADO ═══ -->
+<div id="pantalla-resultado">
+  <div class="result-selva-box">
+    <span class="res-mascota-selva" id="res-mascota-selva">🏆</span>
+    <div class="res-titulo-selva" id="res-titulo-selva">¡AVENTURA<br>COMPLETADA!</div>
+    <div class="res-puntos-selva" id="res-puntos-selva">0</div>
+    <div class="res-puntos-label-selva">puntos totales</div>
+    <div class="estrellas-selva" id="res-estrellas-selva">⭐⭐⭐</div>
+    <p class="res-msg-selva" id="res-msg-selva">Mensaje</p>
+  </div>
+
+  <div class="stats-selva">
+    <div class="stat-selva-celda"><div class="sps-num" style="color:var(--hoja)" id="sps-ok">0</div><div class="sps-lbl">✅ Correctas</div></div>
+    <div class="stat-selva-celda"><div class="sps-num" style="color:var(--rojo-fruta)" id="sps-mal">0</div><div class="sps-lbl">❌ Incorrectas</div></div>
+    <div class="stat-selva-celda"><div class="sps-num" style="color:var(--amarillo)" id="sps-pct">0%</div><div class="sps-lbl">📊 Precisión</div></div>
+  </div>
+
+  <button class="btn-reintentar-selva" onclick="reiniciar()">🔄 ¡OTRA AVENTURA!</button>
+</div>
+
+</div><!-- /container -->
+
+<script>
+const LETRAS = ['A','B','C','D'];
+
+const SENDEROS = {
+  S1: { label:'🔢 SENDERO 1', bg:'rgba(255,204,77,0.2)', border:'#ffcc4d', color:'#ffcc4d' },
+  S2: { label:'⚙️ SENDERO 2', bg:'rgba(111,191,115,0.2)', border:'#6fbf73', color:'#6fbf73' },
+  S3: { label:'🌱 SENDERO 3', bg:'rgba(226,92,92,0.2)', border:'#e25c5c', color:'#e25c5c' },
+  S4: { label:'🍌 SENDERO 4', bg:'rgba(255,146,72,0.2)', border:'#ff9248', color:'#ff9248' },
+};
+
+const PREGUNTAS = [
+  // ── SENDERO 1: Evaluación de polinomios ──
+  { s:'S1', q:'Evalúa el polinomio para el valor dado de x:', expr:'P(x) = x² + 3x − 4    →    P(2) = ?',
+    ops:['6','2','10','−2'], ok:0,
+    exp:'Sustituimos x=2: P(2) = (2)² + 3(2) − 4 = 4 + 6 − 4 = 6. ¡Reemplazamos la variable por el número y resolvemos siguiendo la jerarquía de operaciones!' },
+
+  { s:'S1', q:'Calcula el valor numérico:', expr:'P(x) = 2x³ − x² + 5    →    P(−1) = ?',
+    ops:['2','−2','8','−8'], ok:0,
+    exp:'P(−1) = 2(−1)³ − (−1)² + 5 = 2(−1) − 1 + 5 = −2 − 1 + 5 = 2 ✅. ¡Cuidado con (−1)³=−1 y (−1)²=1: el exponente impar conserva el signo negativo, el exponente par lo elimina!' },
+
+  { s:'S1', q:'¿Qué significa evaluar un polinomio P(x) en x=c?', expr:'P(c) = ?',
+    ops:['Sustituir la variable x por el valor c y calcular el resultado','Dividir el polinomio entre c','Multiplicar todos los términos por c','Igualar el polinomio a cero y despejar c'], ok:0,
+    exp:'EVALUAR un polinomio significa reemplazar la variable (x) por un número específico (c) y realizar las operaciones para obtener un único valor numérico como resultado.' },
+
+  { s:'S1', q:'Calcula P(0) para el siguiente polinomio:', expr:'P(x) = 5x³ − 3x² + 7x − 9    →    P(0) = ?',
+    ops:['−9','0','9','7'], ok:0,
+    exp:'Al evaluar en x=0, TODOS los términos con x se anulan (porque cualquier número multiplicado por 0 es 0). Solo queda el término constante: P(0) = −9. ¡Atajo útil: P(0) siempre es el término constante!' },
+
+  { s:'S1', q:'Evalúa:', expr:'P(x) = x³ − 2x + 1    →    P(3) = ?',
+    ops:['22','16','28','25'], ok:0,
+    exp:'P(3) = (3)³ − 2(3) + 1 = 27 − 6 + 1 = 22 ✅' },
+
+  // ── SENDERO 2: División sintética / Regla de Horner ──
+  { s:'S2', q:'¿Qué representa la Regla de Horner en relación a la evaluación de polinomios?', expr:null,
+    ops:['Es un método para calcular P(c) usando división sintética, sin sustituir directamente','Es una forma de graficar polinomios','Es un método exclusivo para factorizar trinomios','Solo sirve para encontrar el grado del polinomio'], ok:0,
+    exp:'La REGLA DE HORNER (o método de Horner) usa el algoritmo de la división sintética para evaluar P(c): el RESIDUO de dividir P(x) entre (x−c) es exactamente P(c). Es un atajo más eficiente que sustituir directamente, especialmente para polinomios grandes.' },
+
+  { s:'S2', q:'Usa la Regla de Horner para evaluar P(x)=x²+5x+6 en x=1 mediante división sintética:', expr:'Coeficientes: 1, 5, 6    c = 1',
+    ops:['P(1) = 12','P(1) = 6','P(1) = 11','P(1) = 1'], ok:0,
+    exp:'Bajamos 1. 1×1=1, sumamos a 5: 6. 6×1=6, sumamos a 6: 12. El último valor (residuo) es 12, así que P(1)=12. Comprobamos: (1)²+5(1)+6=1+5+6=12 ✅ ¡Coincide!' },
+
+  { s:'S2', q:'Evalúa P(x) = 2x³ − x + 4 en x=2 usando división sintética (Horner):', expr:'Coeficientes: 2, 0, −1, 4    c = 2',
+    ops:['P(2) = 18','P(2) = 14','P(2) = 16','P(2) = 20'], ok:0,
+    exp:'Bajamos 2. 2×2=4, sumamos a 0: 4. 4×2=8, sumamos a −1: 7. 7×2=14, sumamos a 4: 18. P(2)=18. Comprobamos: 2(8)−2+4=16−2+4=18 ✅' },
+
+  { s:'S2', q:'¿Cuál es la ventaja principal de usar Horner en vez de sustitución directa para evaluar polinomios grandes?', expr:null,
+    ops:['Requiere menos multiplicaciones y es más eficiente','Da resultados diferentes pero más precisos','Solo funciona con números negativos','Permite evitar el uso de exponentes'], ok:0,
+    exp:'El método de Horner reduce el número de multiplicaciones necesarias (usa multiplicaciones sucesivas en lugar de calcular cada potencia por separado), haciéndolo más EFICIENTE para polinomios de grado alto.' },
+
+  { s:'S2', q:'Al usar Horner, el RESIDUO de la división sintética representa:', expr:'P(x) ÷ (x − c)   →   Residuo = ?',
+    ops:['El valor de P(c)','El valor de P(0)','El grado del polinomio','El coeficiente principal'], ok:0,
+    exp:'Por el Teorema del Residuo, el residuo de dividir P(x) entre (x−c) usando división sintética es EXACTAMENTE P(c). Por eso la división sintética se puede usar como herramienta para evaluar polinomios.' },
+
+  // ── SENDERO 3: Verificación de raíces ──
+  { s:'S3', q:'¿Cómo se verifica si un número "a" es RAÍZ de un polinomio P(x)?', expr:null,
+    ops:['Evaluando P(a); si P(a)=0, entonces a es raíz','Sumando a al polinomio completo','Dividiendo el polinomio por 2','Multiplicando P(x) por a'], ok:0,
+    exp:'Un número "a" es RAÍZ (o cero) del polinomio P(x) si al evaluarlo se obtiene P(a)=0. Esta es la definición fundamental de raíz, y se puede comprobar por sustitución directa o por división sintética.' },
+
+  { s:'S3', q:'Verifica si x=2 es raíz de P(x) = x² − 5x + 6', expr:'P(2) = (2)² − 5(2) + 6 = ?',
+    ops:['P(2)=0, por lo tanto x=2 SÍ es raíz','P(2)=4, por lo tanto x=2 NO es raíz','P(2)=2, por lo tanto x=2 SÍ es raíz','No se puede determinar sin graficar'], ok:0,
+    exp:'P(2) = 4 − 10 + 6 = 0. Como el resultado es 0, x=2 ES una raíz del polinomio. ¡Esta es la forma más directa de comprobar raíces!' },
+
+  { s:'S3', q:'¿Es x=−1 una raíz de P(x) = x³ + 2x² − x − 2?', expr:'P(−1) = (−1)³ + 2(−1)² − (−1) − 2 = ?',
+    ops:['P(−1)=0, x=−1 SÍ es raíz','P(−1)=−2, x=−1 NO es raíz','P(−1)=2, x=−1 SÍ es raíz','P(−1)=4, x=−1 NO es raíz'], ok:0,
+    exp:'P(−1) = −1 + 2(1) − (−1) − 2 = −1+2+1−2 = 0. ¡x=−1 SÍ es una raíz del polinomio!' },
+
+  { s:'S3', q:'Usando división sintética con c=3, el residuo de dividir P(x) entre (x−3) es 5. ¿Qué podemos concluir?', expr:'Residuo = 5  →  ¿x=3 es raíz?',
+    ops:['x=3 NO es raíz, porque el residuo debe ser 0 para serlo','x=3 SÍ es raíz porque hay residuo','El residuo no tiene relación con las raíces','Se necesita más información para decidir'], ok:0,
+    exp:'Como el Residuo = P(3) según el Teorema del Residuo, y aquí el residuo es 5 (no 0), entonces P(3)≠0, por lo tanto x=3 NO es una raíz del polinomio.' },
+
+  { s:'S3', q:'Un estudiante afirma: "x=4 es raíz de P(x)=x²−16". ¿Verifica esto correctamente?', expr:'P(4) = (4)² − 16 = ?',
+    ops:['P(4)=0, la afirmación es CORRECTA','P(4)=16, la afirmación es FALSA','P(4)=4, la afirmación es FALSA','No se puede verificar sin factorizar'], ok:0,
+    exp:'P(4) = 16 − 16 = 0. ¡La afirmación es correcta! x=4 es efectivamente una raíz, ya que al evaluarla obtenemos cero.' },
+
+  // ── SENDERO 4: Problemas contextualizados ──
+  { s:'S4', q:'La altura de una planta en cm está dada por H(t) = 2t² + 3t + 5, donde t son los días. ¿Cuál es la altura a los 4 días?', expr:'H(4) = 2(4)² + 3(4) + 5 = ?',
+    ops:['49 cm','37 cm','45 cm','32 cm'], ok:0,
+    exp:'H(4) = 2(16) + 3(4) + 5 = 32 + 12 + 5 = 49 cm. ¡Evaluar el polinomio nos da la altura exacta en ese momento específico!' },
+
+  { s:'S4', q:'Una empresa modela sus ganancias (en miles) con G(x) = −x² + 10x − 9, donde x son las unidades vendidas (en cientos). ¿Cuáles son las ganancias al vender 200 unidades (x=2)?', expr:'G(2) = −(2)² + 10(2) − 9 = ?',
+    ops:['7 mil','11 mil','3 mil','9 mil'], ok:0,
+    exp:'G(2) = −4 + 20 − 9 = 7. Las ganancias al vender 200 unidades son de 7 mil. ¡Los polinomios modelan situaciones reales de costos, ganancias y crecimiento!' },
+
+  { s:'S4', q:'El volumen de una caja se modela como V(x) = x³ − 4x² + 4x. Si x=0 representa que no hay caja, ¿qué confirma esto sobre el polinomio?', expr:'V(0) = (0)³ − 4(0)² + 4(0) = ?',
+    ops:['V(0)=0, lo cual tiene sentido físico (sin dimensiones, no hay volumen)','V(0) debería ser un número negativo','V(0) no se puede calcular','El modelo está mal planteado si V(0)=0'], ok:0,
+    exp:'V(0) = 0. Esto CONFIRMA que el modelo es coherente: si las dimensiones son cero, no puede haber volumen. Verificar valores específicos ayuda a confirmar que un modelo algebraico tiene sentido en el contexto real.' },
+
+  { s:'S4', q:'Un cohete de juguete sigue la trayectoria h(t) = −t² + 6t, donde h es la altura en metros y t el tiempo en segundos. ¿En qué momento el cohete vuelve a tocar el suelo (además de t=0)?', expr:'h(t) = 0  →  −t² + 6t = 0  →  t(−t+6) = 0',
+    ops:['t = 6 segundos (la otra raíz, además de t=0)','t = 0 segundos únicamente','t = −6 segundos','t = 3 segundos'], ok:0,
+    exp:'Factorizando: t(−t+6)=0, las soluciones son t=0 (despegue) y t=6 (cuando vuelve a tocar el suelo). ¡Encontrar las raíces del polinomio nos dice exactamente cuándo ocurre cada evento físico!' },
+];
+
+let mezcladas=[], actual=0, puntos=0, okCount=0, respondio=false;
+const OK_EMOTES =['😎','🤩','🦜','🌴','🏆','🐒'];
+const MAL_EMOTES=['😬','😅','🐍','🦎','🙈','😤'];
+
+function mezclar(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function iniciarQuiz(){
+  mezcladas=mezclar(PREGUNTAS);
+  actual=0;puntos=0;okCount=0;respondio=false;
+  document.getElementById('pts-display-selva').textContent='0';
+  document.getElementById('pantalla-inicio').style.display='none';
+  document.getElementById('pantalla-resultado').style.display='none';
+  document.getElementById('pantalla-quiz').style.display='block';
+  mostrarPregunta();
+}
+
+function mostrarPregunta(){
+  respondio=false;
+  const p=mezcladas[actual];
+  const sendero=SENDEROS[p.s];
+  const total=mezcladas.length;
+
+  document.getElementById('txt-prog-selva').textContent=`Pregunta ${actual+1} de ${total}`;
+  document.getElementById('barra-selva').style.width=`${((actual)/total)*100+5}%`;
+  document.getElementById('mascota-mini-selva').textContent='🦜';
+
+  const tb=document.getElementById('tema-badge-selva');
+  tb.textContent=sendero.label;
+  tb.style.background=sendero.bg;
+  tb.style.borderColor=sendero.border;
+  tb.style.color=sendero.color;
+
+  document.getElementById('num-badge-selva').textContent=`#${actual+1}/${total}`;
+  document.getElementById('texto-pregunta-selva').textContent=p.q;
+
+  const exprEl=document.getElementById('expr-selva');
+  if(p.expr){exprEl.textContent=p.expr;exprEl.style.display='block';}
+  else{exprEl.style.display='none';}
+
+  const fb=document.getElementById('feedback-selva');
+  fb.className='feedback-selva';
+  document.getElementById('btn-sig-selva').style.display='none';
+
+  const wrap=document.getElementById('opciones-selva');
+  wrap.innerHTML='';
+  const idxs=mezclar([0,1,2,3]);
+  const nuevaOk=idxs.indexOf(p.ok);
+  idxs.forEach((orig,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opcion-selva';
+    btn.dataset.esOk=(i===nuevaOk)?'1':'0';
+    btn.innerHTML=`<span class="letra-selva">${LETRAS[i]}</span>${p.ops[orig]}`;
+    btn.onclick=()=>elegir(btn,p);
+    wrap.appendChild(btn);
+  });
+}
+
+function elegir(btn,p){
+  if(respondio)return;
+  respondio=true;
+  document.querySelectorAll('.opcion-selva').forEach(b=>b.disabled=true);
+  const ok=btn.dataset.esOk==='1';
+  if(ok){
+    btn.classList.add('correcta');
+    puntos+=10; okCount++;
+    document.getElementById('pts-display-selva').textContent=puntos;
+    document.getElementById('mascota-mini-selva').textContent=OK_EMOTES[Math.floor(Math.random()*OK_EMOTES.length)];
+    mostrarPuntosAnim(btn);
+    mostrarFeedback(true,p);
+  } else {
+    btn.classList.add('incorrecta');
+    document.getElementById('mascota-mini-selva').textContent=MAL_EMOTES[Math.floor(Math.random()*MAL_EMOTES.length)];
+    document.querySelectorAll('.opcion-selva').forEach(b=>{if(b.dataset.esOk==='1')b.classList.add('correcta');});
+    mostrarFeedback(false,p);
+  }
+  const btnSig=document.getElementById('btn-sig-selva');
+  btnSig.style.display='block';
+  btnSig.textContent=(actual+1<mezcladas.length)?'SIGUIENTE ➡️':'¡VER RESULTADO! 🏆';
+}
+
+function mostrarPuntosAnim(btn){
+  const r=btn.getBoundingClientRect();
+  const el=document.createElement('div');
+  el.className='punto-fly-selva';
+  el.textContent='+10 ⭐';
+  el.style.left=(r.left+r.width/2-35)+'px';
+  el.style.top=(r.top+window.scrollY)+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1200);
+}
+
+function mostrarFeedback(ok,p){
+  const fb=document.getElementById('feedback-selva');
+  const icon=document.getElementById('fb-icon-selva');
+  const titulo=document.getElementById('fb-tit-selva');
+  const cuerpo=document.getElementById('fb-cuerpo-selva');
+  if(ok){
+    fb.className='feedback-selva visible';
+    icon.textContent='✅';
+    titulo.textContent='¡CORRECTO! 🌴';
+  } else {
+    fb.className='feedback-selva visible fb-mal';
+    icon.textContent='❌';
+    titulo.textContent='¡CASI! Sigue explorando 🧭';
+  }
+  cuerpo.innerHTML=`<strong>📚 Explicación:</strong><br>${p.exp}`;
+}
+
+function siguientePregunta(){
+  actual++;
+  if(actual<mezcladas.length) mostrarPregunta();
+  else mostrarResultado();
+}
+
+function mostrarResultado(){
+  document.getElementById('pantalla-quiz').style.display='none';
+  document.getElementById('pantalla-resultado').style.display='block';
+  const total=mezcladas.length;
+  const mal=total-okCount;
+  const pct=Math.round((okCount/total)*100);
+  document.getElementById('sps-ok').textContent=okCount;
+  document.getElementById('sps-mal').textContent=mal;
+  document.getElementById('sps-pct').textContent=pct+'%';
+
+  let mascota,titulo,msg,estrellas;
+  if(pct>=90){mascota='🏆';titulo='¡EXPLORADOR<br>LEGENDARIO!';msg='¡Dominas la evaluación de polinomios, la Regla de Horner y la verificación de raíces como un verdadero maestro de la selva! 🌴✨';estrellas='⭐⭐⭐⭐⭐';confetti(90);}
+  else if(pct>=75){mascota='🤩';titulo='¡GRAN<br>AVENTURA!';msg='¡Excelente exploración! Tu manejo del valor numérico es sólido. Repasa la Regla de Horner para descubrir todos los tesoros. 💪';estrellas='⭐⭐⭐⭐';confetti(40);}
+  else if(pct>=55){mascota='😊';titulo='¡BUEN<br>CAMINO!';msg='¡Vas avanzando por la selva! Practica más la evaluación de polinomios y la verificación de raíces. 📚';estrellas='⭐⭐⭐';}
+  else if(pct>=35){mascota='😤';titulo='¡SIGUE<br>EXPLORANDO!';msg='No te rindas, explorador. Repasa cómo sustituir valores y usar la división sintética para evaluar. ¡La selva tiene más secretos por descubrir! 🔥';estrellas='⭐⭐';}
+  else{mascota='💪';titulo='¡VUELVE AL<br>CAMPAMENTO!';msg='Este sendero necesita más práctica. Repasa la evaluación de polinomios, la Regla de Horner y cómo verificar raíces. ¡Vuelve a intentar la aventura! 📖';estrellas='⭐';}
+
+  document.getElementById('res-mascota-selva').textContent=mascota;
+  document.getElementById('res-titulo-selva').innerHTML=titulo;
+  document.getElementById('res-msg-selva').textContent=msg;
+  document.getElementById('res-estrellas-selva').textContent=estrellas;
+
+  let p2=0;const target=puntos;const step=Math.max(1,Math.ceil(target/60));
+  const el=document.getElementById('res-puntos-selva');
+  const iv=setInterval(()=>{p2=Math.min(p2+step,target);el.textContent=p2;if(p2>=target)clearInterval(iv);},20);
+}
+
+function confetti(n=70){
+  const cols=['#ffcc4d','#6fbf73','#e25c5c','#ff9248','#fef8e8','#3e8e6e'];
+  for(let i=0;i<n;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='confetti-selva';
+      el.style.left=Math.random()*100+'vw';
+      el.style.top='-20px';
+      el.style.background=cols[Math.floor(Math.random()*cols.length)];
+      el.style.animationDuration=(Math.random()*2+2.5)+'s';
+      el.style.animationDelay=(Math.random()*1.5)+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),5500);
+    },i*25);
+  }
+}
+
+function reiniciar(){
+  document.getElementById('pantalla-resultado').style.display='none';
+  document.getElementById('pantalla-inicio').style.display='block';
+}
+</script>
+</body>
+</html>
